@@ -7,7 +7,8 @@
 ## 🚀 Live Demo
 
 🌐 **Streamlit App:**
-https://global-conflict-economic-impact-dashboard-su4cnfbumnhpuhl877wx.streamlit.app/
+ [Global Conflict & Economic Impact Dashboard](https://global-conflict-economic-impact-dashboard-su4cnfbumnhpuhl877wx.streamlit.app/)
+
 
 ---
 
