@@ -1,9 +1,6 @@
-# ============================================================
-# Global Conflict & Economic Impact Dashboard
-# Main Application
-# ============================================================
-
 import streamlit as st
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 from utils.data_loader import load_dashboard_data
 
@@ -16,196 +13,118 @@ from dashboard.impact_dashboard import show_impact_dashboard
 from dashboard.world_map_dashboard import show_world_map_dashboard
 
 
-# ============================================================
-# Page Configuration
-# ============================================================
+# -------------------------------------------------------
+# Page Config
+# -------------------------------------------------------
 
 st.set_page_config(
     page_title="Global Conflict & Economic Impact Dashboard",
     page_icon="🌍",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# ============================================================
-# Custom CSS
-# ============================================================
-
-st.markdown("""
-<style>
-
-#MainMenu {visibility:hidden;}
-footer {visibility:hidden;}
-header {visibility:hidden;}
-
-.main{
-    background-color:#0E1117;
-}
-
-.block-container{
-    padding-top:1rem;
-}
-
-[data-testid="stSidebar"]{
-    background-color:#161A28;
-}
-
-h1,h2,h3,h4,h5{
-    color:white;
-}
-
-.metric-card{
-    background:#1E1E1E;
-    border-radius:10px;
-    padding:20px;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# ============================================================
+# -------------------------------------------------------
 # Load Data
-# ============================================================
+# -------------------------------------------------------
 
 master, conflict, military, inflation, oil = load_dashboard_data()
 
-# ============================================================
-# Sidebar
-# ============================================================
+# -------------------------------------------------------
+# Create Impact Dataset
+# -------------------------------------------------------
 
-st.sidebar.image(
-    "assets/logo.png",
-    use_container_width=True
+impact = (
+    master
+    .groupby("Country Name")
+    .agg({
+        "Conflict_Count": "sum",
+        "Average_Intensity": "mean",
+        "Military_Spending": "mean",
+        "Inflation_Rate": "mean",
+        "Average_Oil_Price": "mean"
+    })
+    .reset_index()
 )
 
-st.sidebar.title("Navigation")
+scaler = MinMaxScaler()
+
+cols = [
+    "Conflict_Count",
+    "Average_Intensity",
+    "Military_Spending",
+    "Inflation_Rate",
+    "Average_Oil_Price"
+]
+
+impact[cols] = scaler.fit_transform(impact[cols])
+
+impact["Impact_Score"] = (
+      0.35 * impact["Conflict_Count"]
+    + 0.25 * impact["Average_Intensity"]
+    + 0.20 * impact["Military_Spending"]
+    + 0.10 * impact["Inflation_Rate"]
+    + 0.10 * impact["Average_Oil_Price"]
+)
+
+# -------------------------------------------------------
+# Sidebar
+# -------------------------------------------------------
+
+st.sidebar.title("🌍 Navigation")
 
 page = st.sidebar.radio(
 
-    "",
+    "Select Dashboard",
 
     [
 
-        [
-"🏠 Executive Dashboard",
-"⚔️ Conflict Analysis",
-"🪖 Military Spending",
-"📈 Inflation Analysis",
-"🛢 Oil Price Analysis",
-"🌍 Global Impact",
-"🗺️ World Map"
-]
+        "🏠 Executive Dashboard",
+
+        "⚔️ Conflict Dashboard",
+
+        "🪖 Military Dashboard",
+
+        "📈 Inflation Dashboard",
+
+        "🛢 Oil Dashboard",
+
+        "🌍 Global Impact Dashboard",
+
+        "🗺️ World Map Dashboard"
 
     ]
 
 )
 
-st.sidebar.markdown("---")
-
-# ============================================================
-# Global Filters
-# ============================================================
-
-countries = sorted(
-    master["Country Name"].dropna().unique()
-)
-
-country = st.sidebar.selectbox(
-
-    "Country",
-
-    ["All Countries"] + countries
-
-)
-
-year_min = int(master["Year"].min())
-
-year_max = int(master["Year"].max())
-
-year_range = st.sidebar.slider(
-
-    "Year",
-
-    year_min,
-
-    year_max,
-
-    (year_min, year_max)
-
-)
-
-filtered = master.copy()
-
-if country != "All Countries":
-
-    filtered = filtered[
-        filtered["Country Name"] == country
-    ]
-
-filtered = filtered[
-
-    (filtered["Year"] >= year_range[0]) &
-    (filtered["Year"] <= year_range[1])
-
-]
-
-# ============================================================
+# -------------------------------------------------------
 # Navigation
-# ============================================================
+# -------------------------------------------------------
 
 if page == "🏠 Executive Dashboard":
 
-    show_executive_dashboard(
-        filtered,
-        impact
-    )
+    show_executive_dashboard(master, impact)
 
-elif page == "⚔️ Conflict Analysis":
+elif page == "⚔️ Conflict Dashboard":
 
-    show_conflict_dashboard(
-        filtered
-    )
+    show_conflict_dashboard(master)
 
-elif page == "🪖 Military Spending":
+elif page == "🪖 Military Dashboard":
 
-    show_military_dashboard(
-        filtered
-    )
+    show_military_dashboard(master)
 
-elif page == "📈 Inflation Analysis":
+elif page == "📈 Inflation Dashboard":
 
-    show_inflation_dashboard(
-        filtered
-    )
+    show_inflation_dashboard(master)
 
-elif page == "🛢 Oil Price Analysis":
+elif page == "🛢 Oil Dashboard":
 
-    show_oil_dashboard(
-        filtered
-    )
+    show_oil_dashboard(master)
 
-elif page == "🌍 Global Impact":
+elif page == "🌍 Global Impact Dashboard":
 
-    show_impact_dashboard(
-        filtered
-    )
+    show_impact_dashboard(master)
 
-elif page == "🗺️ World Map":
+elif page == "🗺️ World Map Dashboard":
 
     show_world_map_dashboard(master)
-
-# ============================================================
-# Footer
-# ============================================================
-
-st.sidebar.markdown("---")
-
-st.sidebar.success(
-    "Global Conflict & Economic Impact Dashboard"
-)
-
-st.sidebar.caption(
-    "Developed using Python, Pandas, Plotly & Streamlit"
-)
-
 
