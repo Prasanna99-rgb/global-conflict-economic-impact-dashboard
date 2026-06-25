@@ -453,3 +453,284 @@ regions and conflict intensity over time.
     )
 
     st.divider()
+
+
+
+    # ========================================================
+    # Side A Analysis
+    # ========================================================
+
+    st.subheader("👥 Top 15 Side A Actors")
+
+    side_a = (
+
+        conflict_df
+
+        .groupby("side_a")
+
+        .size()
+
+        .reset_index(name="Conflict_Count")
+
+        .sort_values(
+            "Conflict_Count",
+            ascending=False
+        )
+
+        .head(15)
+
+    )
+
+    st.plotly_chart(
+
+        bar_chart(
+
+            side_a,
+
+            "side_a",
+
+            "Conflict_Count",
+
+            "Top Side A Actors"
+
+        ),
+
+        use_container_width=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Side B Analysis
+    # ========================================================
+
+    st.subheader("👥 Top 15 Side B Actors")
+
+    side_b = (
+
+        conflict_df
+
+        .groupby("side_b")
+
+        .size()
+
+        .reset_index(name="Conflict_Count")
+
+        .sort_values(
+            "Conflict_Count",
+            ascending=False
+        )
+
+        .head(15)
+
+    )
+
+    st.plotly_chart(
+
+        bar_chart(
+
+            side_b,
+
+            "side_b",
+
+            "Conflict_Count",
+
+            "Top Side B Actors"
+
+        ),
+
+        use_container_width=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Conflict Duration
+    # ========================================================
+
+    st.subheader("⏳ Conflict Duration Analysis")
+
+    duration_df = conflict_df.copy()
+
+    duration_df["start_date"] = pd.to_datetime(
+        duration_df["start_date"],
+        errors="coerce"
+    )
+
+    duration_df["ep_end_date"] = pd.to_datetime(
+        duration_df["ep_end_date"],
+        errors="coerce"
+    )
+
+    duration_df["Conflict_Duration_Days"] = (
+
+        duration_df["ep_end_date"]
+
+        -
+
+        duration_df["start_date"]
+
+    ).dt.days
+
+    duration_df = duration_df.dropna(
+        subset=["Conflict_Duration_Days"]
+    )
+
+    st.metric(
+
+        "Average Duration (Days)",
+
+        f"{duration_df['Conflict_Duration_Days'].mean():.0f}"
+
+    )
+
+    st.plotly_chart(
+
+        bar_chart(
+
+            duration_df
+
+            .sort_values(
+                "Conflict_Duration_Days",
+                ascending=False
+            )
+
+            .head(15),
+
+            "location",
+
+            "Conflict_Duration_Days",
+
+            "Longest Conflicts"
+
+        ),
+
+        use_container_width=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Longest Conflicts Table
+    # ========================================================
+
+    st.subheader("📅 Top 15 Longest Conflicts")
+
+    longest = (
+
+        duration_df
+
+        [
+
+            [
+
+                "location",
+
+                "side_a",
+
+                "side_b",
+
+                "Conflict_Duration_Days"
+
+            ]
+
+        ]
+
+        .sort_values(
+
+            "Conflict_Duration_Days",
+
+            ascending=False
+
+        )
+
+        .head(15)
+
+    )
+
+    st.dataframe(
+
+        longest,
+
+        use_container_width=True,
+
+        hide_index=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Business Insights
+    # ========================================================
+
+    st.subheader("📌 Key Insights")
+
+    highest_country = (
+
+        conflict_df["location"]
+
+        .value_counts()
+
+        .idxmax()
+
+    )
+
+    highest_region = (
+
+        conflict_df["region"]
+
+        .value_counts()
+
+        .idxmax()
+
+    )
+
+    common_type = (
+
+        conflict_df["type_of_conflict"]
+
+        .mode()[0]
+
+    )
+
+    st.success(f"""
+
+### Dashboard Summary
+
+• Total Conflict Records : **{len(conflict_df):,}**
+
+• Countries Covered : **{conflict_df['location'].nunique()}**
+
+• Regions Covered : **{conflict_df['region'].nunique()}**
+
+• Most Affected Country : **{highest_country}**
+
+• Most Affected Region : **{highest_region}**
+
+• Most Common Conflict Type : **{common_type}**
+
+• Average Conflict Duration : **{duration_df['Conflict_Duration_Days'].mean():.0f} Days**
+
+""")
+
+    st.divider()
+
+    # ========================================================
+    # Download Dataset
+    # ========================================================
+
+    st.download_button(
+
+        label="📥 Download Conflict Dataset",
+
+        data=conflict_df.to_csv(index=False),
+
+        file_name="conflict_dashboard.csv",
+
+        mime="text/csv"
+
+    )
