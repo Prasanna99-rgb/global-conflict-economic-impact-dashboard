@@ -14,27 +14,27 @@ import pandas as pd
 def load_dashboard_data():
 
     master = pd.read_csv(
-        "dashboard_master.csv"
+        "data/dashboard_master.csv"
     )
 
     conflict = pd.read_csv(
-        "dashboard_conflicts.csv"
+        "data/dashboard_conflicts.csv"
     )
 
     economy = pd.read_csv(
-        "dashboard_economy.csv"
+        "data/dashboard_economy.csv"
     )
 
     impact = pd.read_csv(
-        "dashboard_impact.csv"
+        "data/dashboard_impact.csv"
     )
 
     yearly = pd.read_csv(
-        "dashboard_yearly.csv"
+        "data/dashboard_yearly.csv"
     )
 
     kpi = pd.read_csv(
-        "dashboard_kpi.csv"
+        "data/dashboard_kpi.csv"
     )
 
     return (
