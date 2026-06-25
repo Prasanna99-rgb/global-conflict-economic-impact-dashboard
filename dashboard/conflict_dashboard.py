@@ -247,3 +247,209 @@ regions and conflict intensity over time.
         hide_index=True
 
     )
+
+    # ========================================================
+    # Load Original Conflict Dataset
+    # ========================================================
+
+    conflict_df = pd.read_csv(
+        "Data_Processed/clean_conflict.csv"
+    )
+
+    # ========================================================
+    # Regional Conflict Analysis
+    # ========================================================
+
+    st.subheader("🌍 Conflicts by Region")
+
+    region_data = (
+
+        conflict_df
+
+        .groupby("region")
+
+        .size()
+
+        .reset_index(name="Conflict_Count")
+
+        .sort_values(
+            "Conflict_Count",
+            ascending=False
+        )
+
+    )
+
+    st.plotly_chart(
+
+        bar_chart(
+
+            region_data,
+
+            "region",
+
+            "Conflict_Count",
+
+            "Regional Conflict Distribution"
+
+        ),
+
+        use_container_width=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Conflict Type Analysis
+    # ========================================================
+
+    st.subheader("⚔️ Conflict Type Distribution")
+
+    type_data = (
+
+        conflict_df
+
+        .groupby("type_of_conflict")
+
+        .size()
+
+        .reset_index(name="Count")
+
+    )
+
+    st.plotly_chart(
+
+        bar_chart(
+
+            type_data,
+
+            "type_of_conflict",
+
+            "Count",
+
+            "Conflict Types"
+
+        ),
+
+        use_container_width=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Intensity Level Distribution
+    # ========================================================
+
+    st.subheader("🔥 Conflict Intensity")
+
+    intensity = (
+
+        conflict_df
+
+        .groupby("intensity_level")
+
+        .size()
+
+        .reset_index(name="Count")
+
+    )
+
+    st.plotly_chart(
+
+        bar_chart(
+
+            intensity,
+
+            "intensity_level",
+
+            "Count",
+
+            "Conflict Intensity Levels"
+
+        ),
+
+        use_container_width=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Top 10 Regions
+    # ========================================================
+
+    st.subheader("🌎 Top Conflict Regions")
+
+    st.dataframe(
+
+        region_data.head(10),
+
+        use_container_width=True,
+
+        hide_index=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Conflict Type Table
+    # ========================================================
+
+    st.subheader("📊 Conflict Type Summary")
+
+    st.dataframe(
+
+        type_data,
+
+        use_container_width=True,
+
+        hide_index=True
+
+    )
+
+    st.divider()
+
+    # ========================================================
+    # Average Intensity By Region
+    # ========================================================
+
+    st.subheader("📈 Average Conflict Intensity by Region")
+
+    avg_region = (
+
+        conflict_df
+
+        .groupby("region")["intensity_level"]
+
+        .mean()
+
+        .reset_index()
+
+        .sort_values(
+            "intensity_level",
+            ascending=False
+        )
+
+    )
+
+    st.plotly_chart(
+
+        bar_chart(
+
+            avg_region,
+
+            "region",
+
+            "intensity_level",
+
+            "Average Intensity"
+
+        ),
+
+        use_container_width=True
+
+    )
+
+    st.divider()
