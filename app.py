@@ -13,6 +13,7 @@ from dashboard.military_dashboard import show_military_dashboard
 from dashboard.inflation_dashboard import show_inflation_dashboard
 from dashboard.oil_dashboard import show_oil_dashboard
 from dashboard.impact_dashboard import show_impact_dashboard
+from dashboard.world_map_dashboard import show_world_map_dashboard
 
 
 # ============================================================
@@ -85,17 +86,15 @@ page = st.sidebar.radio(
 
     [
 
-        "🏠 Executive Dashboard",
-
-        "⚔️ Conflict Analysis",
-
-        "🪖 Military Spending",
-
-        "📈 Inflation Analysis",
-
-        "🛢 Oil Price Analysis",
-
-        "🌍 Global Impact"
+        [
+"🏠 Executive Dashboard",
+"⚔️ Conflict Analysis",
+"🪖 Military Spending",
+"📈 Inflation Analysis",
+"🛢 Oil Price Analysis",
+"🌍 Global Impact",
+"🗺️ World Map"
+]
 
     ]
 
@@ -190,6 +189,10 @@ elif page == "🌍 Global Impact":
     show_impact_dashboard(
         filtered
     )
+
+elif page == "🗺️ World Map":
+
+    show_world_map_dashboard(master)
 
 # ============================================================
 # Footer
