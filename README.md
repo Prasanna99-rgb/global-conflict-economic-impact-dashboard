@@ -247,7 +247,7 @@ It is designed to showcase practical analytics skills suitable for **Data Analys
 
 **GitHub:** https://github.com/Prasanna99-rgb
 
-**LinkedIn:** <a href="https://www.linkedin.com/in/prasanna-deshmane-80a419205" target="_blank">https://www.linkedin.com/in/prasanna-deshmane-80a419205</a>
+[LinkedIn](https://www.linkedin.com/in/prasanna-deshmane-80a419205)
 
 **Live Demo:** <a href="https://global-conflict-economic-impact-dashboard-su4cnfbumnhpuhl877wx.streamlit.app/" target="_blank">Global Conflict & Economic Impact Dashboard</a>
 
