@@ -67,7 +67,7 @@ h1,h2,h3,h4,h5{
 # Load Data
 # ============================================================
 
-master, conflict, economy, impact, yearly, kpi = load_dashboard_data()
+master, conflict, military, inflation, oil = load_dashboard_data()
 
 # ============================================================
 # Sidebar
